@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matrix Logic - Calculadora Dinámica</title>
+    
+    <style>
+        /* Reseteo básico y variables de color */
+        :root {
+            --bg-dark: #0a0a0a;
+            --bg-panel: #161616;
+            --neon-cyan: #00e5ff;
+            --text-light: #e0e0e0;
+            --error-red: #ff3333;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        /* Encabezado */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--neon-cyan);
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+        }
+
+        #top-logo {
+            height: 60px;
+            margin-right: 15px;
+            /* Filtro para asegurar que se vea bien en fondo oscuro si el logo tiene fondo blanco */
+            border-radius: 5px; 
+        }
+
+        h1 {
+            color: var(--neon-cyan);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin: 0;
+        }
+
+        .project-info p {
+            margin: 5px 0;
+            font-size: 0.9em;
+            text-align: right;
+        }
+
+        /* Secciones Principales */
+        section {
+            background-color: var(--bg-panel);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #333;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+        }
+
+        h2 { color: var(--neon-cyan); margin-top: 0; }
+
+        /* Inputs y Controles */
+        input[type="number"], select {
+            background-color: #222;
+            border: 1px solid var(--neon-cyan);
+            color: var(--text-light);
+            padding: 8px;
+            border-radius: 4px;
+            margin: 5px;
+            width: 80px; /* Ancho fijo para inputs de config */
+        }
+        
+        select { width: auto; }
+
+        .control-group, .dimensions-container {
+            margin-bottom: 15px;
+            padding: 10px;
+            border-left: 3px solid var(--neon-cyan);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        /* Botones Estilo Neón */
+        .neon-button {
+            background-color: transparent;
+            border: 2px solid var(--neon-cyan);
+            color: var(--neon-cyan);
+            padding: 10px 20px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            font-weight: bold;
+            display: block;
+            margin: 20px auto;
+        }
+
+        .neon-button:hover {
+            background-color: var(--neon-cyan);
+            color: var(--bg-dark);
+            box-shadow: 0 0 15px var(--neon-cyan);
+        }
+
+        /* ESTILOS DE LA CUADRÍCULA MATRICIAL */
+        .matrix-container {
+            margin: 10px;
+            text-align: center;
+        }
+
+        .matrix-grid {
+            display: inline-grid;
+            gap: 5px;
+            padding: 10px;
+            border: 2px solid #444;
+            border-radius: 8px;
+            border-top: none;
+            border-bottom: none;
+            position: relative;
+            background: #0f0f0f;
+        }
+
+        /* Inputs individuales dentro de la matriz */
+        .matrix-cell {
+            width: 50px !important; /* Forzar ancho */
+            text-align: center;
+        }
+        
+        /* Contenedor Flex para resultados y entradas */
+        .flex-wrap-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+        }
+
+        /* Botones secundarios (Agregar/Quitar) */
+        .secondary-button {
+            background: #333;
+            color: var(--text-light);
+            border: 1px solid #555;
+            padding: 8px 15px;
+            cursor: pointer;
+            margin: 5px;
+            border-radius: 4px;
+            font-size: 0.9em;
+            transition: 0.2s;
+        }
+
+        .secondary-button:hover {
+            background: #444;
+            border-color: var(--neon-cyan);
+            color: var(--neon-cyan);
+        }
+
+        .matrix-controls {
+            margin: 15px 0;
+            text-align: center;
+        }
+
+        /* Símbolo de operador entre matrices dinámicas */
+        .operator-sign {
+            font-size: 2em;
+            color: var(--neon-cyan);
+            font-weight: bold;
+            margin: 0 10px;
+        }
+
+        .error-text {
+            color: var(--error-red);
+            font-weight: bold;
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        /* Media Query para móviles */
+        @media (max-width: 768px) {
+            header { flex-direction: column; text-align: center; }
+            .project-info p { text-align: center; }
+            #matrix-input-section { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-container">
+            <img src="logo1.png" alt="Matrix Logic Logo" id="top-logo">
+            <h1>MATRIX LOGIC</h1>
+        </div>
+        <div class="project-info">
+            <p>Integrantes: Jonier Blandon, Ian Cepeda</p>
+            <p>Fecha: 09/12/2025</p>
+        </div>
+    </header>
+
+    <main>
+        <section id="setup-section">
+            <h2>Configuración de Operación</h2>
+            
+            <div class="control-group">
+                <label for="operation-select">Operación:</label>
+                <select id="operation-select">
+                    <option value="add">Suma (A + B + ...)</option>
+                    <option value="subtract">Resta (A - B - ...)</option>
+                    <option value="multiply">Multiplicación (A × B × ...)</option>
+                    <option value="determinant">Determinante (Solo Matriz A)</option>
+                    <option value="inverse2x2">Inversa 2x2 (Solo Matriz A)</option>
+                </select>
+            </div>
+
+            <div id="matrices-config-container"></div>
+
+            <div class="matrix-controls" id="dynamic-controls">
+                <button id="btn-add-matrix" class="secondary-button">+ Agregar Matriz</button>
+                <button id="btn-remove-matrix" class="secondary-button">- Quitar</button>
+            </div>
+            
+            <button id="btn-generate" class="neon-button">GENERAR MATRICES</button>
+        </section>
+
+        <section id="matrix-input-section" style="display:none;">
+            <div id="matrices-input-container" class="flex-wrap-container"></div>
+            
+            <div class="action-area">
+                <button id="btn-calculate" class="neon-button primary">CALCULAR RESULTADO</button>
+                <p id="error-message" class="error-text"></p>
+            </div>
+        </section>
+
+        <section id="results-section" style="display:none;">
+             <h2>Resultados</h2>
+             <div id="result-container" class="matrix-container result-style"></div>
+        </section>
+
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
